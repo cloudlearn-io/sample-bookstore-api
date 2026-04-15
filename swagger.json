@@ -1,0 +1,412 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Bookstore API",
+    "description": "A sample Bookstore REST API for managing books and authors.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Books",
+      "description": "Operations for managing books"
+    },
+    {
+      "name": "Authors",
+      "description": "Operations for managing authors"
+    }
+  ],
+  "paths": {
+    "/books": {
+      "get": {
+        "tags": ["Books"],
+        "summary": "List all books",
+        "description": "Returns a list of all books in the bookstore. Optionally filter by genre.",
+        "operationId": "listBooks",
+        "parameters": [
+          {
+            "name": "genre",
+            "in": "query",
+            "description": "Filter books by genre",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["Fiction", "Non-Fiction", "Science Fiction", "Mystery", "Biography"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of books",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Book"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Books"],
+        "summary": "Add a new book",
+        "description": "Adds a new book to the bookstore inventory.",
+        "operationId": "addBook",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewBook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Book created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/books/{bookId}": {
+      "get": {
+        "tags": ["Books"],
+        "summary": "Get a book by ID",
+        "description": "Returns a single book by its ID.",
+        "operationId": "getBookById",
+        "parameters": [
+          {
+            "name": "bookId",
+            "in": "path",
+            "description": "ID of the book to retrieve",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single book",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Book not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Books"],
+        "summary": "Update a book",
+        "description": "Updates an existing book by its ID.",
+        "operationId": "updateBook",
+        "parameters": [
+          {
+            "name": "bookId",
+            "in": "path",
+            "description": "ID of the book to update",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewBook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Book updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Book not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Books"],
+        "summary": "Delete a book",
+        "description": "Removes a book from the bookstore by its ID.",
+        "operationId": "deleteBook",
+        "parameters": [
+          {
+            "name": "bookId",
+            "in": "path",
+            "description": "ID of the book to delete",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Book not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors": {
+      "get": {
+        "tags": ["Authors"],
+        "summary": "List all authors",
+        "description": "Returns a list of all authors in the bookstore.",
+        "operationId": "listAuthors",
+        "responses": {
+          "200": {
+            "description": "A list of authors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Author"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors/{authorId}": {
+      "get": {
+        "tags": ["Authors"],
+        "summary": "Get an author by ID",
+        "description": "Returns a single author and their books.",
+        "operationId": "getAuthorById",
+        "parameters": [
+          {
+            "name": "authorId",
+            "in": "path",
+            "description": "ID of the author to retrieve",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single author with their books",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorWithBooks"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Author not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Book": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the book"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the book"
+          },
+          "authorId": {
+            "type": "integer",
+            "description": "ID of the author"
+          },
+          "author": {
+            "type": "string",
+            "description": "Name of the author"
+          },
+          "genre": {
+            "type": "string",
+            "description": "Genre of the book",
+            "enum": ["Fiction", "Non-Fiction", "Science Fiction", "Mystery", "Biography"]
+          },
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "Price of the book in USD"
+          },
+          "inStock": {
+            "type": "boolean",
+            "description": "Whether the book is currently in stock"
+          }
+        }
+      },
+      "NewBook": {
+        "type": "object",
+        "required": ["title", "authorId", "genre", "price"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the book"
+          },
+          "authorId": {
+            "type": "integer",
+            "description": "ID of the author"
+          },
+          "genre": {
+            "type": "string",
+            "description": "Genre of the book",
+            "enum": ["Fiction", "Non-Fiction", "Science Fiction", "Mystery", "Biography"]
+          },
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "Price of the book in USD"
+          },
+          "inStock": {
+            "type": "boolean",
+            "description": "Whether the book is currently in stock",
+            "default": true
+          }
+        }
+      },
+      "Author": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the author"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the author"
+          },
+          "bio": {
+            "type": "string",
+            "description": "Short biography of the author"
+          }
+        }
+      },
+      "AuthorWithBooks": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "books": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Book"
+            }
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
